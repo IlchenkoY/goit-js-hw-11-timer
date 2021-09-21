@@ -1,11 +1,6 @@
-const daysTimer = document.querySelector('[data-value="days"]');
-const hoursTimer = document.querySelector('[data-value="hours"]');
-const minsTimer = document.querySelector('[data-value="mins"]');
-const secsTimer = document.querySelector('[data-value="secs"]');
-
 class CountdownTimer {
-    constructor({ onTick, targetDate}) {
-        this.onTick = onTick;
+    constructor({targetDate,selector}) {
+        this.timerEl = document.querySelector(selector);
         this.targetDate = targetDate;
     }
 
@@ -13,8 +8,7 @@ class CountdownTimer {
         setInterval(() => {
             const currentTime = Date.now();
             const time = currentTime - this.targetDate;
-            const timeComponents = this.getTimeComponents(time)
-            this.onTick(timeComponents);
+            this.getTimeComponents(time);
         },1000);
     }
 
@@ -24,8 +18,15 @@ class CountdownTimer {
         const mins = this.pad(Math.floor((time % (1000 * 60 * 60)) / (1000 * 60)));
         const secs = this.pad(Math.floor((time % (1000 * 60)) / 1000));
 
-            return { days, hours, mins, secs };
+        return this.setTimer({ days, hours, mins, secs });;
         
+    }
+
+    setTimer(timeComponents) {
+        const valuesArr = this.timerEl.querySelectorAll('.value');
+        valuesArr.forEach(el => {
+            el.textContent = timeComponents[el.dataset.value];
+        });
     }
 
     pad(value) {
@@ -33,15 +34,8 @@ class CountdownTimer {
     }
 };
 
-function updateTimer({ days, hours, mins, secs }) {
-        daysTimer.textContent = `${days}`;
-        hoursTimer.textContent = `${hours}`;
-        minsTimer.textContent = `${mins}`;
-        secsTimer.textContent = `${secs}`;
-    }
-
 const countdownTimer = new CountdownTimer({
-    onTick: updateTimer,
+    selector: '#timer-1',
     targetDate: new Date('Oct 17, 2021'),
 });
 
